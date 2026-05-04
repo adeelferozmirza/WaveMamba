@@ -1,0 +1,43 @@
+DEVICE: 'cuda:0'
+NUM_WORKERS: 8
+SEED_NUM: 1
+
+DATASET:
+  name: 'DDD17Event'
+  # path: '/nfs/share_hdd_6t/Datasets/zhuxx/DDD17_events' # Replace with your own path
+  path: '/media/adeel/hdd2/event_data/ddd17_seg/data/' # Replace with your own path
+  require_paired_data: True
+  classes: 6
+  event_representation: 'voxel_grid'
+  fixed_duration: True
+  delta_t: 50
+  nr_bins: 10
+  img_chnls: 1
+  data_type: 'fusion'
+  img_size: [200, 346]
+
+MODEL:
+  name: 'MambaSeg-8'
+  version_img: 'groupmamba_small'
+  version_ev: 'groupmamba_small'
+  pretrained_img: './groupmamba_small_ema.pth'
+  pretrained_ev: './groupmamba_small_ema.pth'
+  event_rep: 'None'
+  fuse: 'MWCMF'
+
+TRAIN:
+  lr_scheduler: 'polynomial'
+  # lr_scheduler: 'fixed'
+  warmup_iters: 500
+  batch_size: 4
+  accum_steps: 2
+  amp: true
+  lr_init: 0.0002
+  num_epochs: 80
+  save_every_n_epochs: 20
+  log_dir: 'log/DDD17/test'
+  resume_checkpoint: /media/adeel/hdd2/WaveMamba/log/ddd17/test/best_model.pth
+
+EVAL:
+  batch_size: 4
+  weight_path: '/media/adeel/hdd2/WaveMamba/log/ddd17/test/best_model.pth'
